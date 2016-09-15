@@ -76,7 +76,7 @@ hapiConsole.register = function(server, options, next) {
 
         console.log(
             `\
-${req.server.info.host}:${req.server.info.port}|\
+${req.connection.info.host}:${req.connection.info.port}[${req.connection.settings.labels.join('|')}] | \
 ${formatDate(metrics.start)} \
 [${credentials}] \
 ${req.method.toUpperCase()}:${req.path} \

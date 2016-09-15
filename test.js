@@ -4,7 +4,8 @@ const server = new Hapi.Server();
 
 const plugin = require('./index');
 
-server.connection({ port: 8080 });
+server.connection({ port: 8080, labels: ['test', '1'] });
+server.connection({ port: 8081, labels: ['test', '2'] });
 // server.connection({ port: 8081 });
 
 server.route({
@@ -19,7 +20,6 @@ server.route({
 server.register({
     register: plugin,
     options: {
-        message: 'hello'
     }
 }, (err) => {
 
