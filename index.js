@@ -16,6 +16,10 @@ const pad = (width, text, char) => {
 };
 
 const processTime = (time) => {
+    if (!time) {
+        return 0;
+    }
+
     return time[0] * 1000 + time[1] / 1e+6;
 };
 
