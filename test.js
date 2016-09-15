@@ -16,10 +16,19 @@ server.route({
         return res('');
     }
 });
+server.route({
+    path: '/ignore/me',
+    method: 'get',
+    handler: (req, res) => {
+        'use strict';
+        return res('');
+    }
+});
 
 server.register({
     register: plugin,
     options: {
+        ignore: ['/ignore/me']
     }
 }, (err) => {
 

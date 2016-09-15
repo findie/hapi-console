@@ -36,6 +36,13 @@ ${pad(3, d.getUTCMilliseconds())}`;
 hapiConsole.register = function(server, options, next) {
     console.log('Starting server(s):');
 
+    const ignored = (options && options.ignore || [])
+        .reduce((obj, path) => {
+            obj[path] = 1;
+            return obj
+        }, {});
+
+
     server.connections.forEach(connection => {
         console.log(Object.assign({ labels: connection.settings.labels }, connection.info));
     });
@@ -73,7 +80,7 @@ hapiConsole.register = function(server, options, next) {
 
         let credentials = JSON.stringify(req.credentials || null);
 
-        console.log(
+        !ignored[req.path] && console.log(
             `\
 ${req.connection.info.host}:${req.connection.info.port}[${req.connection.settings.labels.join('|')}] | \
 ${formatDate(metrics.start)} \
