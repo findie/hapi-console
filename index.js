@@ -37,9 +37,8 @@ hapiConsole.register = function(server, options, next) {
     console.log('Starting server(s):');
 
     server.connections.forEach(connection => {
-        console.log(connection.info);
+        console.log(Object.assign({ labels: connection.settings.labels }, connection.info));
     });
-
 
     server.on('request-internal', function(request, event) {
         if (~event.tags.indexOf("error") && ~event.tags.indexOf("internal") && event.data) {
