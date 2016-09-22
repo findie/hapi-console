@@ -26,7 +26,7 @@ const processTime = (time) => {
 const formatDate = (timestamp) => {
     const d = (new Date(timestamp));
 
-    return `UTC \
+    return `\
 ${d.getUTCFullYear()}-\
 ${pad(2, d.getUTCMonth())}-\
 ${pad(2, d.getUTCDate())} \
@@ -82,14 +82,16 @@ hapiConsole.register = function(server, options, next) {
 
         let metrics = requests[req.id];
 
-        let credentials = JSON.stringify(req.credentials || null);
+        let credentials = JSON.stringify((req.auth && req.auth.credentials) || null);
 
         !ignored[req.path] && console.log(
             `\
-${req.connection.info.host}:${req.connection.info.port}[${req.connection.settings.labels.join('|')}] | \
 ${formatDate(metrics.start)} \
+\
+${req.connection.info.host}:${req.connection.info.port} \
+[${req.connection.settings.labels.join('|')}] | \
 [${credentials}] \
-${req.method.toUpperCase()}:${req.path} \
+${req.response.statusCode} ${req.method.toUpperCase()}:${req.path} \
 \
 ~ ${processTime(metrics.time)}ms [ ${processTime(metrics.auth)}ms + ${processTime(metrics.handler)}ms ]\
 `);
