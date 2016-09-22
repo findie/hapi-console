@@ -1,7 +1,8 @@
 'use strict';
 
-const hapiConsole = {};
+const colors = require('./colors');
 
+const hapiConsole = {};
 const requests = {};
 
 const pad = (width, text, char) => {
@@ -59,16 +60,21 @@ hapiConsole.register = function(server, options, next) {
 
         if (!Object.keys(credentials).length) credentials = null;
 
-        credentials = JSON.stringify(credentials);
+        credentials = colors.apply(`[${JSON.stringify(credentials)}]`, colors.lightBlue);
 
-        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.info.remoteAddress;
+        const ip = colors.apply(
+            req.headers['cf-connecting-ip'] ||
+            req.headers['x-forwarded-for'] ||
+            req.info.remoteAddress,
+            colors.lightYellow
+        );
 
         return (
             `\
-${req.id} :${req.connection.info.port} \
-[${req.connection.settings.labels.join('|')}] | \
+${colors.apply(req.id, colors.lightCyan)} :${colors.apply(req.connection.info.port, colors.lightGrey)} \
+${colors.apply(`[${req.connection.settings.labels.join('|')}]`, colors.lightGreen)} | \
 ${ip} \
-[${credentials}] | \
+${credentials} | \
 `);
     };
 
@@ -113,7 +119,7 @@ ${event.data instanceof Object ? JSON.stringify(event.data) : event.data}\
         requests[req.id].handler = process.hrtime(requests[req.id].handler);
         res.continue();
     });
-    server.ext('onPreResponse', (req, res) => {
+    server.on('response', (req, res) => {
         requests[req.id].time = process.hrtime(requests[req.id].time);
 
         let metrics = requests[req.id];
@@ -132,16 +138,16 @@ ${event.data instanceof Object ? JSON.stringify(event.data) : event.data}\
         !ignored[req.path] && console.log(
             `\
 ${generatePrefix(req)}\
-${req.response.statusCode} ${req.method.toUpperCase()}:${req.path} \
+${colors.code(req.response.statusCode)} ${colors.method(req.method)}:${req.path} \
 \
-~ ${processTime(metrics.time)}ms [ ${processTime(metrics.auth)}ms + ${processTime(metrics.handler)}ms ]\
+~ ${colors.apply(processTime(metrics.time) + 'ms', colors.green)} \
+[ ${colors.apply(processTime(metrics.auth) + 'ms', colors.yellow)} \
++ ${colors.apply(processTime(metrics.handler) + 'ms', colors.blue)} ]\
 `);
         delete requests[req.id];
 
         credentials = null;
         metrics = null;
-
-        res.continue();
     });
 
     return next();
