@@ -141,8 +141,8 @@ ${generatePrefix(req)}\
 ${colors.code(req.response.statusCode)} ${colors.method(req.method)}:${req.path} \
 \
 ~ ${colors.apply(processTime(metrics.time) + 'ms', colors.green)} \
-[ ${colors.apply(processTime(metrics.auth) + 'ms', colors.yellow)} \
-+ ${colors.apply(processTime(metrics.handler) + 'ms', colors.blue)} ]\
+[ ${colors.apply(processTime(metrics.auth) + 'ms', colors.blue)} \
++ ${colors.apply(processTime(metrics.handler) + 'ms', colors.yellow)} ]\
 `);
         delete requests[req.id];
 
