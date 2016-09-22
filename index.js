@@ -94,7 +94,7 @@ ${credentials} | \
         !ignored[req.path] && console.log(
             `\
 ${generatePrefix(req)}\
-[${event.tags.join('/')}] \
+${colors.apply(`[${event.tags.join('/')}]`, colors.green)} \
 ${event.data instanceof Object ? JSON.stringify(event.data) : event.data}\
 `);
     });
