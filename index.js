@@ -40,6 +40,10 @@ ${pad(3, d.getUTCMilliseconds())}`;
 hapiConsole.register = function(server, options, next) {
     console.log('Starting server(s):');
 
+    options = options || {};
+
+    options.userFilter = options.userFilter || { uid: 1 };
+
     const ignored = (options && options.ignore || [])
         .reduce((obj, path) => {
             obj[path] = 1;
@@ -82,7 +86,12 @@ hapiConsole.register = function(server, options, next) {
 
         let metrics = requests[req.id];
 
-        let credentials = JSON.stringify((req.auth && req.auth.credentials) || null);
+        let credentials = (req.auth && req.auth.credentials) || {};
+        Object.keys(credentials).forEach(key => {
+            if (!options.userFilter[key]) delete credentials[key];
+        });
+
+        if(!Object.keys(credentials).length) credentials = null;
 
         !ignored[req.path] && console.log(
             `\
