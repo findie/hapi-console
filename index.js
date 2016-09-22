@@ -95,12 +95,15 @@ hapiConsole.register = function(server, options, next) {
 
         credentials = JSON.stringify(credentials);
 
+        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.info.remoteAddress;
+
         !ignored[req.path] && console.log(
             `\
 ${formatDate(metrics.start)} \
 \
 ${req.connection.info.host}:${req.connection.info.port} \
 [${req.connection.settings.labels.join('|')}] | \
+${ip} \
 [${credentials}] \
 ${req.response.statusCode} ${req.method.toUpperCase()}:${req.path} \
 \
@@ -113,8 +116,6 @@ ${req.response.statusCode} ${req.method.toUpperCase()}:${req.path} \
 
         res.continue();
     });
-
-    // server.on
 
     return next();
 };
