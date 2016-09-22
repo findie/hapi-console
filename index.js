@@ -93,6 +93,8 @@ hapiConsole.register = function(server, options, next) {
 
         if(!Object.keys(credentials).length) credentials = null;
 
+        credentials = JSON.stringify(credentials);
+
         !ignored[req.path] && console.log(
             `\
 ${formatDate(metrics.start)} \
