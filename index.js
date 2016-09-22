@@ -51,14 +51,46 @@ hapiConsole.register = function(server, options, next) {
         }, {});
 
 
+    const generatePrefix = (req) => {
+        let credentials = (req.auth && req.auth.credentials) || {};
+        Object.keys(credentials).forEach(key => {
+            if (!options.userFilter[key]) delete credentials[key];
+        });
+
+        if (!Object.keys(credentials).length) credentials = null;
+
+        credentials = JSON.stringify(credentials);
+
+        const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.info.remoteAddress;
+
+        return (
+            `\
+${req.id} :${req.connection.info.port} \
+[${req.connection.settings.labels.join('|')}] | \
+${ip} \
+[${credentials}] | \
+`);
+    };
+
     server.connections.forEach(connection => {
         console.log(Object.assign({ labels: connection.settings.labels }, connection.info));
     });
+
 
     server.on('request-internal', function(request, event) {
         if (~event.tags.indexOf("error") && ~event.tags.indexOf("internal") && event.data) {
             console.error(event.data);
         }
+    });
+
+
+    server.on('request', function(req, event) {
+        !ignored[req.path] && console.log(
+            `\
+${generatePrefix(req)}\
+[${event.tags.join('/')}] \
+${event.data instanceof Object ? JSON.stringify(event.data) : event.data}\
+`);
     });
 
     server.ext('onRequest', (req, res) => {
@@ -91,7 +123,7 @@ hapiConsole.register = function(server, options, next) {
             if (!options.userFilter[key]) delete credentials[key];
         });
 
-        if(!Object.keys(credentials).length) credentials = null;
+        if (!Object.keys(credentials).length) credentials = null;
 
         credentials = JSON.stringify(credentials);
 
@@ -99,12 +131,7 @@ hapiConsole.register = function(server, options, next) {
 
         !ignored[req.path] && console.log(
             `\
-${formatDate(metrics.start)} \
-\
-${req.connection.info.host}:${req.connection.info.port} \
-[${req.connection.settings.labels.join('|')}] | \
-${ip} \
-[${credentials}] \
+${generatePrefix(req)}\
 ${req.response.statusCode} ${req.method.toUpperCase()}:${req.path} \
 \
 ~ ${processTime(metrics.time)}ms [ ${processTime(metrics.auth)}ms + ${processTime(metrics.handler)}ms ]\

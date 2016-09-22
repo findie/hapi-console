@@ -13,13 +13,15 @@ server.route({
     method: 'get',
     handler: (req, res) => {
         'use strict';
-        return res('');
+        req.log('log', 'ana are mere');
+        setTimeout(() => req.log('later', 'ana are pere'), 100);
+        setTimeout(() => res(''), 200);
     }
 });
 server.route({
     path: '/ignore/me',
     method: 'get',
-    handler: (req, res) => {
+    handler: (req, res)=> {
         'use strict';
         return res('');
     }
