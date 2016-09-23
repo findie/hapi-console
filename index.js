@@ -57,7 +57,7 @@ SERVER ${connection.settings.labels.join('/')} STARTED
         return (
             `\
 ${colors.apply(req.id, colors.lightCyan)}${colors.apply(`:${req.connection.info.port}`, colors.lightGrey)} \
-${colors.apply(`[${req.connection.settings.labels.join('|')}]`, colors.lightGreen)} \
+${colors.apply(`[${req.connection.settings.labels.join('/')}]`, colors.lightGreen)} \
 ${ip} \
 ${credentials} \
 `);
@@ -99,7 +99,7 @@ ${(event.data instanceof Object ? JSON.stringify(event.data) : event.data) || ''
         const serverID = server.info ? server.info.id : server.connections[0].info.id;
         process.stdout.write(
             `\
-${colors.apply(`${Date.now()}:${serverID}      `, colors.cyan)} | \
+${colors.apply(`${Date.now()}:${serverID} `, colors.cyan)} | \
 ${colors.apply(`[${data.tags.join('/')}]`, colors.green)} \
 ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
 `);
