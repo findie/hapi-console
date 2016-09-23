@@ -1,9 +1,12 @@
 # Hapi Console
 _Lightweight colored console output for hapi_
 
-[![npm version](https://badge.fury.io/js/hapi-console.svg)](https://badge.fury.io/js/hapi-console)
-
 ![console output](https://raw.githubusercontent.com/findie/hapi-console/master/images/logo.png)
+
+# Install
+[![npm](https://img.shields.io/npm/v/npm.svg?maxAge=2592000)](https://www.npmjs.com/package/hapi-console)
+
+`npm i --save hapi-console`
 
 # Quick Example
 ```javascript
