@@ -21,7 +21,7 @@ const processTime = (time) => {
         return 0;
     }
 
-    return time[0] * 1000 + time[1] / 1e+6;
+    return ((((time[0] * 1000 + time[1] / 1e+6) * 100) | 0) / 100);
 };
 
 const formatDate = (timestamp) => {
@@ -83,10 +83,10 @@ SERVER ${connection.settings.labels.join('/')} STARTED
 
         return (
             `\
-${colors.apply(req.id, colors.lightCyan)} :${colors.apply(req.connection.info.port, colors.lightGrey)} \
-${colors.apply(`[${req.connection.settings.labels.join('|')}]`, colors.lightGreen)} | \
+${colors.apply(req.id, colors.lightCyan)}${colors.apply(`:${req.connection.info.port}`, colors.lightGrey)} \
+${colors.apply(`[${req.connection.settings.labels.join('|')}]`, colors.lightGreen)} \
 ${ip} \
-${credentials} | \
+${credentials} \
 `);
     };
 
@@ -95,12 +95,12 @@ ${credentials} | \
         const error = (event.data && event.data.data) || event.data;
         const stack = error.stack || error;
 
-        process.nextTick(() => process.stderr.write(
+        setTimeout(() => process.stderr.write(
             `\
 ${generatePrefix(req)}\
 ${colors.apply('[ERROR]', colors.red)} \
 ${colors.apply(stack, colors.red)}
-`));
+`), 10);
     };
 
     server.on('request-internal', function(req, event) {
@@ -152,7 +152,7 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
         requests[req.id].handler = process.hrtime(requests[req.id].handler);
         res.continue();
     });
-    server.on('response', (req, res) => {
+    server.on('response', (req, event) => {
         requests[req.id].time = process.hrtime(requests[req.id].time);
 
         let metrics = requests[req.id];
@@ -171,11 +171,11 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
         !ignored[req.path] && process.stdout.write(
             `\
 ${generatePrefix(req)}\
-${colors.code(req.response.statusCode)} ${colors.method(req.method)}:${req.path} \
+${colors.code(req.response.statusCode)} ${colors.method(req.method)}:${req.path}\
 \
-~ ${colors.apply(processTime(metrics.time) + 'ms', colors.green)} \
-[ ${colors.apply(processTime(metrics.auth) + 'ms', colors.blue)} \
-+ ${colors.apply(processTime(metrics.handler) + 'ms', colors.yellow)} ]
+ ${colors.apply(processTime(metrics.time), colors.green)}\
+[${colors.apply(processTime(metrics.auth), colors.blue)}\
++${colors.apply(processTime(metrics.handler), colors.yellow)}]
 `);
         delete requests[req.id];
 
