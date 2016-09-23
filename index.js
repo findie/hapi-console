@@ -111,8 +111,8 @@ ${(event.data instanceof Object ? JSON.stringify(event.data) : event.data) || ''
         const serverID = server.info ? server.info.id : server.connections[0].info.id;
         console.log(
             `\
-${colors.apply(`${Date.now()}:${serverID}      `, colors.cyan)} \
-${colors.apply(`[${data.tags.join('/')}]`, colors.green)} | \
+${colors.apply(`${Date.now()}:${serverID}      `, colors.cyan)} | \
+${colors.apply(`[${data.tags.join('/')}]`, colors.green)} \
 ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}\
 `);
     });
