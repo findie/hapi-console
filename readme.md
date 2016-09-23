@@ -80,44 +80,48 @@ SERVER {connection assigned labels split by /} STARTED
 
 ### Server Log
 `server.log(['log', 'test'], 'this is a server log');`
-
+```
 Example: 
-`1474629596922:Stefan:26747:itfodt0w       | [log/test] this is a server log`
+1474629596922:Stefan:26747:itfodt0w       | [log/test] this is a server log
 Explanation: 
-`{ timestamp }:{host}:{pid}:{ts base64}   | [{tags}] {message}`
-
+{ timestamp }:{host}:{pid}:{ts base64}    | [{tags}] {message}
+```
 ### Request Log
 `req.log(['log', 'test'], 'request log');`
-
+```
 Example: 
-`1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [{uid: 12345}] [log/test] log 1`
+1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [{uid: 12345}] [log/test] log 1
 Explanation: 
-`{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] [{tags}] {message}`
+{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] [{tags}] {message}
+```
 
 ### Request Error
 `req.log('error', new Error('¯\\_(ツ)_/¯')`
-
+```
 Example:
-`1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [null] [ERROR] Error ¯\_(ツ)_/¯ \n {stack}`
+1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [null] [ERROR] Error ¯\_(ツ)_/¯ \n {stack}
 Explanation: 
-`{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] [ERROR] {error stack trace}`
+{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] [ERROR] {error stack trace}
+```
 
 ### Reply
 `res({success: true}}`
-
+```
 Example:
-`1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [{uid: 1234}] 200 GET:/ 117.69[0.12+103.52]`
+1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [{uid: 1234}] 200 GET:/ 117.69[0.12+103.52]
 Explanation:
-`{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] {status code} {method}:{path} {total time ms}[{auth time ms}+{handler time ms}]`
+{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] {status code} {method}:{path} {total time ms}[{auth time ms}+{handler time ms}]
 Info: if the times don't add up that's because there's also time spent inside the `HAPI` server code 
+```
 
 ### Unexpected Error
 `throw 'up'`
-
+```
 Example:
-`1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [null] [ERROR] Error: Uncaught error: up`
+1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [null] [ERROR] Error: Uncaught error: up
 Explanation: 
-``{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] [ERROR] {error stack trace}``
+{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] [ERROR] {error stack trace}
+```
 
 ## Colors:
 Colors will enable automatically
