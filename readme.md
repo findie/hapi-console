@@ -1,6 +1,8 @@
 # Hapi Console
 _Lightweight colored console output for hapi_
 
+[![npm version](https://badge.fury.io/js/hapi-console.svg)](https://badge.fury.io/js/hapi-console)
+
 ![console output](https://raw.githubusercontent.com/findie/hapi-console/master/images/logo.png)
 
 # Quick Example
