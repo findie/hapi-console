@@ -4,7 +4,7 @@ _Lightweight colored console output for hapi_
 ![console output](https://raw.githubusercontent.com/findie/hapi-console/master/images/logo.png)
 
 # Install
-[![npm](https://img.shields.io/npm/v/npm.svg?maxAge=2592000)](https://www.npmjs.com/package/hapi-console)
+[![npm](https://img.shields.io/npm/v/hapi-console.svg?maxAge=2592000)](https://www.npmjs.com/package/hapi-console)
 
 `npm i --save hapi-console`
 
