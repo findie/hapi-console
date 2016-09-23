@@ -1,14 +1,16 @@
 {
   "name": "hapi-console",
   "version": "0.5.2",
-  "description": "",
+  "description": "Lightweight colored console output for hapi",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Stefan-Gabriel Muscalu <stefan.gabriel.muscalu@gmail.com> (http://my.corneroftheinternet.rocks/)",
-  "license": "Unlicense",
+  "author": "Stefan-Gabriel Muscalu <stefan@findie.me>",
+  "license": "a",
   "devDependencies": {
     "hapi": "^15.0.3"
+  },
+  "engines": {
+    "node": ">=4.5.0"
   }
 }

@@ -1,20 +1,9 @@
 'use strict';
 
-const colors = require('./colors');
+const colors = require('./lib/colors');
 
 const hapiConsole = {};
 const requests = {};
-
-const pad = (width, text, char) => {
-    const leftToPad = width - text.toString().length;
-    if (width <= 0) {
-        return text;
-    }
-
-    const charToPad = char || '0';
-
-    return charToPad.repeat(leftToPad) + text;
-};
 
 const processTime = (time) => {
     if (!time) {
@@ -22,20 +11,6 @@ const processTime = (time) => {
     }
 
     return ((((time[0] * 1000 + time[1] / 1e+6) * 100) | 0) / 100);
-};
-
-const formatDate = (timestamp) => {
-    const d = (new Date(timestamp));
-
-    return `\
-${d.getUTCFullYear()}-\
-${pad(2, d.getUTCMonth())}-\
-${pad(2, d.getUTCDate())} \
-${pad(2, d.getUTCHours())}:\
-${pad(2, d.getUTCMinutes())}:\
-${pad(2, d.getUTCSeconds())}.\
-${pad(3, d.getUTCMilliseconds())}`;
-
 };
 
 hapiConsole.register = function(server, options, next) {
@@ -53,8 +28,6 @@ SERVER ${connection.settings.labels.join('/')} STARTED
     PROTOCOL:   ${info.protocol}
     URI:        ${info.uri}
 `);
-        // process.stdout.write(JSON.stringify(Object.assign({ labels: connection.settings.labels }, connection.info), null, 1));
-        // process.stdout.write('\n');
     });
 
     const ignored = (options && options.ignore || [])

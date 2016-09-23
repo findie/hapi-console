@@ -17,7 +17,7 @@ server.route({
         req.log('error', new Error());
         req.log('log', 'ana are mere');
         setTimeout(() => req.log('later', 'ana are pere'), 60);
-        // setTimeout(() => res(''), 200);
+        setTimeout(() => res(''), 200);
         server.log('log', 'this is a server log');
         server.log(['log', 'test']);
         req.log(['log', 'test']);
@@ -26,6 +26,16 @@ server.route({
 });
 server.route({
     path: '/ignore/me',
+    method: 'get',
+    handler: (req, res)=> {
+        'use strict';
+        return res('');
+    }
+});
+
+
+server.route({
+    path: '/test',
     method: 'get',
     handler: (req, res)=> {
         'use strict';
