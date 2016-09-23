@@ -1,6 +1,8 @@
 # Hapi Console
 _Lightweight colored console output for hapi_
 
+![console output](https://raw.githubusercontent.com/findie/hapi-console/master/images/logo.png)
+
 # Quick Example
 ```javascript
 const Hapi = require('hapi');
@@ -133,4 +135,4 @@ Use `--no-color` or `--color=false`
 Use `--color`, `--color=true` or `--color=always`
 
 ## License
-Please see `license.md`
+Please see [`license.md`](https://github.com/findie/hapi-console/blob/master/license.md)

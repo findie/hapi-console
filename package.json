@@ -20,5 +20,9 @@
     "console-hapi",
     "output",
     "log"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:findie/hapi-console.git"
+  },
 }
