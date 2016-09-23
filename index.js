@@ -6,11 +6,13 @@ const hapiConsole = {};
 const requests = {};
 
 const processTime = (time) => {
-    if (!time) {
-        return 0;
-    }
+    return !time ?
+        0 :
+        ((((time[0] * 1000 + time[1] / 1e+6) * 100) | 0) / 100);
+};
 
-    return ((((time[0] * 1000 + time[1] / 1e+6) * 100) | 0) / 100);
+const displayTime = (time) => {
+    return isNaN(time) ? '?' : ((time * 100) | 0) / 100;
 };
 
 hapiConsole.register = function(server, options, next) {
@@ -114,7 +116,7 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
         res.continue();
     });
     server.ext('onPostAuth', (req, res) => {
-        requests[req.id].auth = process.hrtime(requests[req.id].auth);
+        requests[req.id].auth = processTime(process.hrtime(requests[req.id].auth));
         res.continue();
     });
     server.ext('onPreHandler', (req, res) => {
@@ -122,11 +124,11 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
         res.continue();
     });
     server.ext('onPostHandler', (req, res) => {
-        requests[req.id].handler = process.hrtime(requests[req.id].handler);
+        requests[req.id].handler = processTime(process.hrtime(requests[req.id].handler));
         res.continue();
     });
     server.on('response', (req, event) => {
-        requests[req.id].time = process.hrtime(requests[req.id].time);
+        requests[req.id].time = processTime(process.hrtime(requests[req.id].time));
 
         let metrics = requests[req.id];
 
@@ -146,9 +148,9 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
 ${generatePrefix(req)}\
 ${colors.code(req.response.statusCode)} ${colors.method(req.method)}:${req.path}\
 \
- ${colors.apply(processTime(metrics.time), colors.green)}\
-[${colors.apply(processTime(metrics.auth), colors.blue)}\
-+${colors.apply(processTime(metrics.handler), colors.yellow)}]
+ ${colors.apply(displayTime(metrics.time), colors.green)}\
+[${colors.apply(displayTime(metrics.auth), colors.blue)}\
++${colors.apply(displayTime(metrics.handler), colors.yellow)}]
 `);
         delete requests[req.id];
 
