@@ -39,7 +39,7 @@ ${pad(3, d.getUTCMilliseconds())}`;
 };
 
 hapiConsole.register = function(server, options, next) {
-    console.log('Starting server(s):');
+    process.stdout.write('Starting server(s):\n');
 
     options = options || {};
 
@@ -79,7 +79,8 @@ ${credentials} | \
     };
 
     server.connections.forEach(connection => {
-        console.log(Object.assign({ labels: connection.settings.labels }, connection.info));
+        process.stdout.write(JSON.stringify(Object.assign({ labels: connection.settings.labels }, connection.info), null, 1));
+        process.stdout.write('\n');
     });
 
 
@@ -89,31 +90,31 @@ ${credentials} | \
             const error = event.data.data || event.data;
             const stack = error.stack || error;
 
-            process.stderr.write(
+            process.nextTick(() => process.stderr.write(
                 `\
 ${generatePrefix(req)}\
 ${colors.apply('[ERROR]', colors.red)} \
 ${colors.apply(stack, colors.red)}
-`);
+`));
         }
     });
 
     server.on('request', function(req, event) {
-        !ignored[req.path] && console.log(
+        !ignored[req.path] && process.stdout.write(
             `\
 ${generatePrefix(req)}\
 ${colors.apply(`[${event.tags.join('/')}]`, colors.green)} \
-${(event.data instanceof Object ? JSON.stringify(event.data) : event.data) || ''}\
+${(event.data instanceof Object ? JSON.stringify(event.data) : event.data) || ''}
 `);
     });
 
     server.on('log', function(data) {
         const serverID = server.info ? server.info.id : server.connections[0].info.id;
-        console.log(
+        process.stdout.write(
             `\
 ${colors.apply(`${Date.now()}:${serverID}      `, colors.cyan)} | \
 ${colors.apply(`[${data.tags.join('/')}]`, colors.green)} \
-${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}\
+${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
 `);
     });
 
@@ -153,14 +154,14 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}\
 
         const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.info.remoteAddress;
 
-        !ignored[req.path] && console.log(
+        !ignored[req.path] && process.stdout.write(
             `\
 ${generatePrefix(req)}\
 ${colors.code(req.response.statusCode)} ${colors.method(req.method)}:${req.path} \
 \
 ~ ${colors.apply(processTime(metrics.time) + 'ms', colors.green)} \
 [ ${colors.apply(processTime(metrics.auth) + 'ms', colors.blue)} \
-+ ${colors.apply(processTime(metrics.handler) + 'ms', colors.yellow)} ]\
++ ${colors.apply(processTime(metrics.handler) + 'ms', colors.yellow)} ]
 `);
         delete requests[req.id];
 
