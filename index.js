@@ -39,11 +39,23 @@ ${pad(3, d.getUTCMilliseconds())}`;
 };
 
 hapiConsole.register = function(server, options, next) {
-    process.stdout.write('Starting server(s):\n');
-
     options = options || {};
 
     options.userFilter = options.userFilter || { uid: 1 };
+
+    server.connections.forEach(connection => {
+        const info = connection.info;
+        process.stdout.write(`\
+SERVER ${connection.settings.labels.join('/')} STARTED
+    ID:         ${info.id}
+    PORT:       ${info.port}
+    HOST:       ${info.host}
+    PROTOCOL:   ${info.protocol}
+    URI:        ${info.uri}
+`);
+        // process.stdout.write(JSON.stringify(Object.assign({ labels: connection.settings.labels }, connection.info), null, 1));
+        // process.stdout.write('\n');
+    });
 
     const ignored = (options && options.ignore || [])
         .reduce((obj, path) => {
@@ -77,12 +89,6 @@ ${ip} \
 ${credentials} | \
 `);
     };
-
-    server.connections.forEach(connection => {
-        process.stdout.write(JSON.stringify(Object.assign({ labels: connection.settings.labels }, connection.info), null, 1));
-        process.stdout.write('\n');
-    });
-
 
     server.on('request-internal', function(req, event) {
         if (~event.tags.indexOf("error") && event.data && event.data.isDeveloperError) {
