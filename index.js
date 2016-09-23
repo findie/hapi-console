@@ -83,9 +83,18 @@ ${credentials} | \
     });
 
 
-    server.on('request-internal', function(request, event) {
-        if (~event.tags.indexOf("error") && ~event.tags.indexOf("internal") && event.data) {
-            console.error(event.data);
+    server.on('request-internal', function(req, event) {
+        if (~event.tags.indexOf("error") && event.data && event.data.isDeveloperError) {
+
+            const error = event.data.data || event.data;
+            const stack = error.stack || error;
+
+            process.stderr.write(
+                `\
+${generatePrefix(req)}\
+${colors.apply('[ERROR]', colors.red)} \
+${colors.apply(stack, colors.red)}
+`);
         }
     });
 
@@ -98,7 +107,7 @@ ${event.data instanceof Object ? JSON.stringify(event.data) : event.data}\
 `);
     });
 
-    server.on('log', function (data) {
+    server.on('log', function(data) {
         const serverID = server.info ? server.info.id : server.connections[0].info.id;
         console.log(
             `\

@@ -1,6 +1,6 @@
 const Hapi = require('hapi');
 
-const server = new Hapi.Server();
+const server = new Hapi.Server({debug: false});
 
 const plugin = require('./index');
 
@@ -16,7 +16,8 @@ server.route({
         req.log('log', 'ana are mere');
         setTimeout(() => req.log('later', 'ana are pere'), 100);
         setTimeout(() => res(''), 200);
-        server.log('log', 'this is a server log')
+        server.log('log', 'this is a server log');
+        throw new Error('up');
     }
 });
 server.route({
