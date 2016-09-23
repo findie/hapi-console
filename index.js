@@ -89,13 +89,22 @@ ${credentials} | \
         }
     });
 
-
     server.on('request', function(req, event) {
         !ignored[req.path] && console.log(
             `\
 ${generatePrefix(req)}\
 ${colors.apply(`[${event.tags.join('/')}]`, colors.green)} \
 ${event.data instanceof Object ? JSON.stringify(event.data) : event.data}\
+`);
+    });
+
+    server.on('log', function (data) {
+        const serverID = server.info ? server.info.id : server.connections[0].info.id;
+        console.log(
+            `\
+${colors.apply(`${Date.now()}:${serverID}      `, colors.cyan)} \
+${colors.apply(`[${data.tags.join('/')}]`, colors.green)} | \
+${data.data instanceof Object ? JSON.stringify(data.data) : data.data}\
 `);
     });
 
