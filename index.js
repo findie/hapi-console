@@ -103,7 +103,7 @@ ${colors.apply(stack, colors.red)}
             `\
 ${generatePrefix(req)}\
 ${colors.apply(`[${event.tags.join('/')}]`, colors.green)} \
-${event.data instanceof Object ? JSON.stringify(event.data) : event.data}\
+${(event.data instanceof Object ? JSON.stringify(event.data) : event.data) || ''}\
 `);
     });
 
@@ -113,7 +113,7 @@ ${event.data instanceof Object ? JSON.stringify(event.data) : event.data}\
             `\
 ${colors.apply(`${Date.now()}:${serverID}      `, colors.cyan)} \
 ${colors.apply(`[${data.tags.join('/')}]`, colors.green)} | \
-${data.data instanceof Object ? JSON.stringify(data.data) : data.data}\
+${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}\
 `);
     });
 

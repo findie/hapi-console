@@ -17,6 +17,8 @@ server.route({
         setTimeout(() => req.log('later', 'ana are pere'), 100);
         setTimeout(() => res(''), 200);
         server.log('log', 'this is a server log');
+        server.log(['log', 'test']);
+        req.log(['log', 'test']);
         throw new Error('up');
     }
 });
