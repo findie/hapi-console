@@ -1,5 +1,14 @@
 # Hapi Console
-_Lightweight colored console output for hapi_
+
+```
+so colours
+much lightweight
+such better
+wow
+```
+~ [Eek](https://github.com/eek) 2016
+
+___
 
 ![console output](https://raw.githubusercontent.com/findie/hapi-console/master/images/logo.png)
 
