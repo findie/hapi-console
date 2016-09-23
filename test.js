@@ -13,6 +13,8 @@ server.route({
     method: 'get',
     handler: (req, res) => {
         'use strict';
+        req.log('error', 'err');
+        req.log('error', new Error());
         req.log('log', 'ana are mere');
         setTimeout(() => req.log('later', 'ana are pere'), 60);
         // setTimeout(() => res(''), 200);

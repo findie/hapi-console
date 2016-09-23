@@ -90,22 +90,30 @@ ${credentials} | \
 `);
     };
 
-    server.on('request-internal', function(req, event) {
-        if (~event.tags.indexOf("error") && event.data && event.data.isDeveloperError) {
 
-            const error = event.data.data || event.data;
-            const stack = error.stack || error;
+    const writeError = (req, event) => {
+        const error = (event.data && event.data.data) || event.data;
+        const stack = error.stack || error;
 
-            process.nextTick(() => process.stderr.write(
-                `\
+        process.nextTick(() => process.stderr.write(
+            `\
 ${generatePrefix(req)}\
 ${colors.apply('[ERROR]', colors.red)} \
 ${colors.apply(stack, colors.red)}
 `));
+    };
+
+    server.on('request-internal', function(req, event) {
+        if (~event.tags.indexOf("error") && event.data && event.data.isDeveloperError) {
+            writeError(req, event);
         }
     });
 
     server.on('request', function(req, event) {
+        if (~event.tags.indexOf('err') || ~event.tags.indexOf('error')) {
+            return writeError(req, event);
+        }
+
         !ignored[req.path] && process.stdout.write(
             `\
 ${generatePrefix(req)}\
