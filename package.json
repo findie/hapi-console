@@ -6,11 +6,19 @@
   "scripts": {
   },
   "author": "Stefan-Gabriel Muscalu <stefan@findie.me>",
-  "license": "a",
+  "license": "Apache-2.0",
   "devDependencies": {
     "hapi": "^15.0.3"
   },
   "engines": {
     "node": ">=4.5.0"
-  }
+  },
+  "keywords": [
+    "hapi",
+    "console",
+    "hapi-console",
+    "console-hapi",
+    "output",
+    "log"
+  ]
 }

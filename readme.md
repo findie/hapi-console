@@ -1,0 +1,132 @@
+# Hapi Console
+_Lightweight colored console output for hapi_
+
+# Quick Example
+```javascript
+const Hapi = require('hapi');
+const server = new Hapi.Server({ debug: false });
+const hapiConsole = require('hapi-console');
+
+server.register({
+    register: hapiConsole,
+    options: {
+    
+        // ignore /ignore/me route
+        ignore: ['/ignore/me'],
+    
+        // only show uid from request.auth.credentials 
+        userFilter: {uid: true}
+    }
+}, () => {
+    if (err) {
+        console.error(err);
+    }
+    
+    server.route({
+        path: '/',
+        method: 'get',
+        handler: (req, res) => {
+        
+            // will show an error
+            req.log('error', 'err');
+             
+            // will also show an error with stack
+            req.log('error', new Error()); 
+            
+            // will log on request
+            req.log('log', 'log 1');  
+
+            // will log on server
+            server.log('log', 'this is a server log'); // we
+            
+            // will show an unexpected error
+            setTimeout(() => {throw new Error('up')}, 100);
+        }
+    });  
+  
+    server.start();
+});
+```
+
+## Options
+
+### `options.ignore {Array.<String>}`
+Will not write to console output from the route's context but ***will*** log errors
+
+### `options.userFilter {Object.<String, Boolean>}`
+Will filter what data from `request.auth.credentials` is shown in the output
+
+## Interpreting the output
+
+### Server start
+Example:
+```
+SERVER test/2 STARTED
+    ID:         Stefan:26747:itfodt15
+    PORT:       8081
+    HOST:       Stefan
+    PROTOCOL:   http
+    URI:        http://Stefan:8081
+```
+Explanation: 
+```
+SERVER {connection assigned labels split by /} STARTED
+       ID:         {connection id}
+       PORT:       {port}
+       HOST:       {host}
+       PROTOCOL:   {protocol}
+       URI:        {full uri}
+```
+
+### Server Log
+`server.log(['log', 'test'], 'this is a server log');`
+
+Example: 
+`1474629596922:Stefan:26747:itfodt0w       | [log/test] this is a server log`
+Explanation: 
+`{ timestamp }:{host}:{pid}:{ts base64}   | [{tags}] {message}`
+
+### Request Log
+`req.log(['log', 'test'], 'request log');`
+
+Example: 
+`1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [{uid: 12345}] [log/test] log 1`
+Explanation: 
+`{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] [{tags}] {message}`
+
+### Request Error
+`req.log('error', new Error('¯\\_(ツ)_/¯')`
+
+Example:
+`1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [null] [ERROR] Error ¯\_(ツ)_/¯ \n {stack}`
+Explanation: 
+`{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] [ERROR] {error stack trace}`
+
+### Reply
+`res({success: true}}`
+
+Example:
+`1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [{uid: 1234}] 200 GET:/ 117.69[0.12+103.52]`
+Explanation:
+`{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] {status code} {method}:{path} {total time ms}[{auth time ms}+{handler time ms}]`
+Info: if the times don't add up that's because there's also time spent inside the `HAPI` server code 
+
+### Unexpected Error
+`throw 'up'`
+
+Example:
+`1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [null] [ERROR] Error: Uncaught error: up`
+Explanation: 
+``{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] [ERROR] {error stack trace}``
+
+## Colors:
+Colors will enable automatically
+
+### Force colors off
+Use `--no-color` or `--color=false`
+
+### Force colors on
+Use `--color`, `--color=true` or `--color=always`
+
+## License
+Please see `license.md`
