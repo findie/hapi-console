@@ -112,12 +112,12 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
         res.continue();
     });
     server.ext('onPreAuth', (req, res) => {
-        requests[req.id].trafficIn = processTime(process.hrtime(requests[req.id].time));
+        requests[req.id].trafficIn = requests[req.id].time ? processTime(process.hrtime(requests[req.id].time)) : undefined;
         requests[req.id].auth = process.hrtime();
         res.continue();
     });
     server.ext('onPostAuth', (req, res) => {
-        requests[req.id].auth = processTime(process.hrtime(requests[req.id].auth));
+        requests[req.id].auth = requests[req.id].auth ? processTime(process.hrtime(requests[req.id].auth)) : undefined;
         res.continue();
     });
     server.ext('onPreHandler', (req, res) => {
@@ -125,13 +125,13 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
         res.continue();
     });
     server.ext('onPostHandler', (req, res) => {
-        requests[req.id].handler = processTime(process.hrtime(requests[req.id].handler));
+        requests[req.id].handler = requests[req.id].handler ? processTime(process.hrtime(requests[req.id].handler)) : undefined;
         requests[req.id].trafficOut = process.hrtime();
         res.continue();
     });
     server.on('response', (req, event) => {
         requests[req.id].time = processTime(process.hrtime(requests[req.id].time));
-        requests[req.id].trafficOut = processTime(process.hrtime(requests[req.id].trafficOut));
+        requests[req.id].trafficOut = requests[req.id].trafficOut ? processTime(process.hrtime(requests[req.id].trafficOut)) : undefined;
 
         let metrics = requests[req.id];
 
