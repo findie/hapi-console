@@ -126,7 +126,7 @@ Explanation:
 Example:
 1474629596915:Stefan:26747:itfodt0w:10000:8080 [test|1] 127.0.0.1 [{uid: 1234}] 200 GET:/ 117.69[0.12+103.52]
 Explanation:
-{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] {status code} {method}:{path} {total time ms}[{auth time ms}+{handler time ms}]
+{ timestamp }:{host}:{pid}:{ts base64}:{counter}:{port} [{connection labels}] {ip} [{user data}] {status code} {method}:{path} {total time ms}[{traffic in time + hapi head}~{auth time ms}+{handler time ms}~{traffic out time + hapi tail}]
 Info: if the times don't add up that's because there's also time spent inside the `HAPI` server code 
 ```
 

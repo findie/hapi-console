@@ -112,6 +112,7 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
         res.continue();
     });
     server.ext('onPreAuth', (req, res) => {
+        requests[req.id].trafficIn = processTime(process.hrtime(requests[req.id].time));
         requests[req.id].auth = process.hrtime();
         res.continue();
     });
@@ -125,10 +126,12 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
     });
     server.ext('onPostHandler', (req, res) => {
         requests[req.id].handler = processTime(process.hrtime(requests[req.id].handler));
+        requests[req.id].trafficOut = process.hrtime();
         res.continue();
     });
     server.on('response', (req, event) => {
         requests[req.id].time = processTime(process.hrtime(requests[req.id].time));
+        requests[req.id].trafficOut = processTime(process.hrtime(requests[req.id].trafficOut));
 
         let metrics = requests[req.id];
 
@@ -149,8 +152,12 @@ ${generatePrefix(req)}\
 ${colors.code(req.response.statusCode)} ${colors.method(req.method)}:${req.path}\
 \
  ${colors.apply(displayTime(metrics.time), colors.green)}\
-[${colors.apply(displayTime(metrics.auth), colors.blue)}\
-+${colors.apply(displayTime(metrics.handler), colors.yellow)}]
+[\
+${colors.apply(displayTime(metrics.trafficIn), colors.grey)}~\
+${colors.apply(displayTime(metrics.auth), colors.blue)}+\
+${colors.apply(displayTime(metrics.handler), colors.yellow)}~\
+${colors.apply(displayTime(metrics.trafficOut), colors.lightGrey)}\
+]
 `);
         delete requests[req.id];
 
