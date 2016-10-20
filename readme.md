@@ -29,9 +29,22 @@ server.register({
     
         // ignore /ignore/me route
         ignore: ['/ignore/me'],
-    
-        // only show uid from request.auth.credentials 
-        userFilter: {uid: true}
+
+        // show custom data about the request
+        custom: {
+            // shows custom data about auth.credentials.uid as 'uid: <>'
+            'auth.credentials.uid': true,  
+            
+            // shows a JSON.stringify version of query
+            'query': true, 
+            
+            // executes the function and uses the output where x is request.headers
+            'headers': (x) => JSON.stringify(x).replace(/"/g, '') 
+        },
+        
+        // if true it uses the full path of the key to display the data 
+        // if false it uses just the last property key to display data
+        customFullLengthKey: false
     }
 }, () => {
     if (err) {
@@ -63,6 +76,8 @@ server.register({
     server.start();
 });
 ```
+
+Note: `userFilter` has been deprecated in favour of `custom` since 0.6.0
 
 ## Options
 
