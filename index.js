@@ -168,15 +168,6 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
 
         let metrics = requests[req.id];
 
-        let credentials = (req.auth && req.auth.credentials) || {};
-        Object.keys(credentials).forEach(key => {
-            if (!options.userFilter[key]) delete credentials[key];
-        });
-
-        if (!Object.keys(credentials).length) credentials = null;
-
-        credentials = JSON.stringify(credentials);
-
         const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.info.remoteAddress;
 
         !ignored[req.path] && process.stdout.write(
@@ -193,8 +184,6 @@ ${colors.apply(displayTime(metrics.trafficOut), colors.lightGrey)}\
 ]
 `);
         delete requests[req.id];
-
-        credentials = null;
         metrics = null;
     });
 
