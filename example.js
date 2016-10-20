@@ -21,7 +21,9 @@ server.route({
         server.log('log', 'this is a server log');
         server.log(['log', 'test']);
         req.log(['log', 'test']);
-        setTimeout(() => {throw new Error('up')}, 100);
+        setTimeout(() => {
+            throw new Error('up')
+        }, 100);
     }
 });
 server.route({
@@ -46,7 +48,16 @@ server.route({
 server.register({
     register: plugin,
     options: {
-        ignore: ['/ignore/me']
+        ignore: ['/ignore/me'],
+        custom: {
+            'auth.credentials.uid': true,
+            'query': true,
+            'headers': (x) => JSON.stringify(x).replace(/"/g, '')
+        },
+        customFullLengthKey: false,
+        userFilter: {
+
+        }
     }
 }, (err) => {
 

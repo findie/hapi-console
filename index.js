@@ -15,10 +15,48 @@ const displayTime = (time) => {
     return isNaN(time) ? '?' : ((time * 100) | 0) / 100;
 };
 
+const displayCustomData = (req, custom, fullLenKey) => {
+    const keyVal = [];
+    Object.keys(custom).forEach(key => {
+        const keyParts = key.split('.');
+
+        let pointer = req;
+        keyParts.forEach(part => {
+            if (!(pointer instanceof Object)) {
+                return;
+            }
+            pointer = pointer[part];
+        });
+        if (pointer === undefined) {
+            return;
+        }
+
+        const data = typeof custom[key] === 'function' ? custom[key](pointer) : JSON.stringify(pointer);
+
+        keyVal.push(`${fullLenKey ? key : keyParts[keyParts.length - 1]}:${data}`);
+    });
+
+    return keyVal.join('|');
+};
+
+/**
+ *
+ * @param server
+ * @param {Object} [options]
+ * @param {Object=} [options.userFilter] DEPRECATED
+ * @param {Object.<String, Boolean|function(*)>} [options.custom] Custom output in console
+ * @param {Array.<String|RegExp>} [options.ignore] Paths fo ignore output from
+ * @param {Boolean} [options.customFullLengthKey] Display the full length of the key or only the extension
+ * @param next
+ * @return {*}
+ */
 hapiConsole.register = function(server, options, next) {
     options = options || {};
 
-    options.userFilter = options.userFilter || { uid: 1 };
+    if (options.userFilter) {
+        console.warn(hapiConsole.register.attributes.pkg.name, ':', '`userFilter` is deprecated! Please use `custom` instead')
+    }
+    options.custom = options.custom || {};
 
     server.connections.forEach(connection => {
         const info = connection.info;
@@ -40,14 +78,9 @@ SERVER ${connection.settings.labels.join('/')} STARTED
 
 
     const generatePrefix = (req) => {
-        let credentials = (req.auth && req.auth.credentials) || {};
-        Object.keys(credentials).forEach(key => {
-            if (!options.userFilter[key]) delete credentials[key];
-        });
+        let customDataText = displayCustomData(req, options.custom, options.customFullLengthKey);
 
-        if (!Object.keys(credentials).length) credentials = null;
-
-        credentials = colors.apply(`[${JSON.stringify(credentials)}]`, colors.lightBlue);
+        customDataText = colors.apply(`[${customDataText}]`, colors.lightBlue);
 
         const ip = colors.apply(
             req.headers['cf-connecting-ip'] ||
@@ -61,7 +94,7 @@ SERVER ${connection.settings.labels.join('/')} STARTED
 ${colors.apply(req.id, colors.lightCyan)}${colors.apply(`:${req.connection.info.port}`, colors.lightGrey)} \
 ${colors.apply(`[${req.connection.settings.labels.join('/')}]`, colors.lightGreen)} \
 ${ip} \
-${credentials} \
+${customDataText} \
 `);
     };
 
