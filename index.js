@@ -167,13 +167,14 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
         requests[req.id].trafficOut = requests[req.id].trafficOut ? processTime(process.hrtime(requests[req.id].trafficOut)) : undefined;
 
         let metrics = requests[req.id];
+        const statusCode = ( req.response && req.response.statusCode ) || 'CONNECTION-KILLED';
 
         const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.info.remoteAddress;
 
         !ignored[req.path] && process.stdout.write(
             `\
 ${generatePrefix(req)}\
-${colors.code(req.response.statusCode)} ${colors.method(req.method)}:${req.path}\
+${colors.code(statusCode)} ${colors.method(req.method)}:${req.path}\
 \
  ${colors.apply(displayTime(metrics.time), colors.green)}\
 [\
