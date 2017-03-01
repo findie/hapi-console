@@ -163,10 +163,11 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
         res.continue();
     });
     server.on('response', (req, event) => {
-        requests[req.id].time = processTime(process.hrtime(requests[req.id].time));
-        requests[req.id].trafficOut = requests[req.id].trafficOut ? processTime(process.hrtime(requests[req.id].trafficOut)) : undefined;
+        const timings = requests[req.id] || {};
 
-        let metrics = requests[req.id];
+        timings.time = timings.time ? processTime(process.hrtime(timings.time)) : undefined;
+        timings.trafficOut = timings.trafficOut ? processTime(process.hrtime(timings.trafficOut)) : undefined;
+
         const statusCode = ( req.response && req.response.statusCode ) || 'CONNECTION-KILLED';
 
         const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.info.remoteAddress;
@@ -176,16 +177,15 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
 ${generatePrefix(req)}\
 ${colors.code(statusCode)} ${colors.method(req.method)}:${req.path}\
 \
- ${colors.apply(displayTime(metrics.time), colors.green)}\
+ ${colors.apply(displayTime(timings.time), colors.green)}\
 [\
-${colors.apply(displayTime(metrics.trafficIn), colors.grey)}~\
-${colors.apply(displayTime(metrics.auth), colors.blue)}+\
-${colors.apply(displayTime(metrics.handler), colors.yellow)}~\
-${colors.apply(displayTime(metrics.trafficOut), colors.lightGrey)}\
+${colors.apply(displayTime(timings.trafficIn), colors.grey)}~\
+${colors.apply(displayTime(timings.auth), colors.blue)}+\
+${colors.apply(displayTime(timings.handler), colors.yellow)}~\
+${colors.apply(displayTime(timings.trafficOut), colors.lightGrey)}\
 ]
 `);
         delete requests[req.id];
-        metrics = null;
     });
 
     return next();
