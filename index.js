@@ -47,6 +47,7 @@ const displayCustomData = (req, custom, fullLenKey) => {
  * @param {Object.<String, Boolean|function(*)>} [options.custom] Custom output in console
  * @param {Array.<String|RegExp>} [options.ignore] Paths fo ignore output from
  * @param {Boolean} [options.customFullLengthKey] Display the full length of the key or only the extension
+ * @param {Boolean} [options.ignoreSyscall] Won't display syscall errors
  * @param next
  * @return {*}
  */
@@ -131,6 +132,12 @@ ${(event.data instanceof Object ? JSON.stringify(event.data) : event.data) || ''
     });
 
     server.on('log', function(data) {
+        const isError = data.tags && !!~data.tags.indexOf('error');
+
+        if(isError && options.ignoreSyscall && data.data && data.data.syscall){
+          return;
+        }
+
         const serverID = server.info ? server.info.id : server.connections[0].info.id;
         process.stdout.write(
             `\

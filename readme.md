@@ -84,6 +84,9 @@ Note: `userFilter` has been deprecated in favour of `custom` since 0.6.0
 ### `options.ignore {Array.<String>}`
 Will not write to console output from the route's context but ***will*** log errors
 
+### `options.ignoreSyscall {Boolean}`
+Will not write to console output any syscall errors
+
 ### `options.userFilter {Object.<String, Boolean>}`
 Will filter what data from `request.auth.credentials` is shown in the output
 
