@@ -1,17 +1,19 @@
 {
   "name": "hapi-console",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "description": "Lightweight colored console output for hapi",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Stefan-Gabriel Muscalu <stefan@findie.me>",
   "license": "Apache-2.0",
+  "peerDependencies": {
+    "hapi": "^17.2.3"
+  },
   "devDependencies": {
-    "hapi": "^15.0.3"
+    "hapi": "^17.2.3"
   },
   "engines": {
-    "node": ">=4.5.0"
+    "node": ">=7.6.0"
   },
   "keywords": [
     "hapi",
