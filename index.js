@@ -195,5 +195,6 @@ ${colors.apply(displayTime(timings.trafficOut), colors.lightGrey)}\
 };
 
 hapiConsole.name = require('./package').name;
+hapiConsole.version = require('./package').version;
 
 module.exports = hapiConsole;
