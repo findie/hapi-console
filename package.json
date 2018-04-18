@@ -1,6 +1,6 @@
 {
   "name": "hapi-console",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight colored console output for hapi",
   "main": "index.js",
   "scripts": {},

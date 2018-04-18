@@ -138,37 +138,37 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
   });
 
   server.ext('onRequest', (req, res) => {
-    requests.set(req.id, { time: process.hrtime(), start: Date.now() });
+    requests.set(req.info.id, { time: process.hrtime(), start: Date.now() });
     // res.continue();
     return res.continue;
   });
 
   server.ext('onPreAuth', (req, res) => {
-    const o = requests.get(req.id);
+    const o = requests.get(req.info.id);
     o.trafficIn = o.time ? processTime(process.hrtime(o.time)) : undefined;
     o.auth = process.hrtime();
     return res.continue;
   });
 
   server.ext('onPostAuth', (req, res) => {
-    const o = requests.get(req.id);
+    const o = requests.get(req.info.id);
     o.auth = o.auth ? processTime(process.hrtime(o.auth)) : undefined;
     return res.continue;
   });
 
   server.ext('onPreHandler', (req, res) => {
-    requests.get(req.id).handler = process.hrtime();
+    requests.get(req.info.id).handler = process.hrtime();
     return res.continue;
   });
 
   server.ext('onPostHandler', (req, res) => {
-    const o = requests.get(req.id);
+    const o = requests.get(req.info.id);
     o.handler = o.handler ? processTime(process.hrtime(o.handler)) : undefined;
     o.trafficOut = process.hrtime();
     return res.continue;
   });
   server.events.on('response', (req, event) => {
-    const timings = requests.get(req.id) || {};
+    const timings = requests.get(req.info.id) || {};
 
     timings.time = timings.time ? processTime(process.hrtime(timings.time)) : undefined;
     timings.trafficOut = timings.trafficOut ? processTime(process.hrtime(timings.trafficOut)) : undefined;
@@ -190,7 +190,7 @@ ${colors.apply(displayTime(timings.handler), colors.yellow)}~\
 ${colors.apply(displayTime(timings.trafficOut), colors.lightGrey)}\
 ]
 `);
-    requests.delete(req.id);
+    requests.delete(req.info.id);
   });
 };
 
