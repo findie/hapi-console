@@ -109,7 +109,10 @@ ${colors.apply(stack, colors.red)}
   };
 
   server.events.on('request', function (req, event) {
-    if (~event.tags.indexOf('err') || ~event.tags.indexOf('error')) {
+    if (~event.tags.indexOf('aborted') || ~event.tags.indexOf('abort')) {
+      return requests.get(req.info.id).aborted = true;
+    }
+    if ((~event.tags.indexOf('err') || ~event.tags.indexOf('error'))) {
       return writeError(req, event);
     }
 
@@ -173,9 +176,7 @@ ${(data.data instanceof Object ? JSON.stringify(data.data) : data.data) || ''}
     timings.time = timings.time ? processTime(process.hrtime(timings.time)) : undefined;
     timings.trafficOut = timings.trafficOut ? processTime(process.hrtime(timings.trafficOut)) : undefined;
 
-    const statusCode = (req.response && req.response.statusCode) || 'CONNECTION-KILLED';
-
-    const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.info.remoteAddress;
+    const statusCode = timings.aborted === true ? 'CONNECTION-KILLED' : (req.response && req.response.statusCode);
 
     !ignored[req.path] && process.stdout.write(
       `\
